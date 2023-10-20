@@ -9,6 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
+    this->valueFirst = 0;
+    this->valueSecond = 0;
+
+    this->valueLink = &valueFirst;
+    this->operationStr = new QString("");
+
     connect(ui->pushButton_0, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_1, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
@@ -20,25 +26,138 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_8, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_9, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
 
+    connect(ui->pushButton_clear, SIGNAL(clicked()), this, SLOT(eventClearOutput()));
+
+    connect(ui->pushButton_plus, SIGNAL(clicked()), this, SLOT(eventClickSum()));
+    connect(ui->pushButton_minus, SIGNAL(clicked()), this, SLOT(eventClickSubtract()));
+    connect(ui->pushButton_multiply, SIGNAL(clicked()), this, SLOT(eventClickMultiply()));
+    connect(ui->pushButton_division, SIGNAL(clicked()), this, SLOT(eventClickDivision()));
+
+    connect(ui->pushButton_result, SIGNAL(clicked()), this, SLOT(eventClickResult()));
+
 }
 
-void MainWindow::eventClickNumber() {
+double MainWindow::functionSum(double a, double b) {
 
-    static double result = 0;
+    double result = a + b;
 
-    QPushButton *button = static_cast<QPushButton*>(sender());
+    return result;
 
-    result = result * 10 + (button->text()).toDouble();
+}
 
-    QString resultStr = QString::number(result, 'g', 12);
+double MainWindow::functionSubtract(double a, double b) {
+
+    double result = a - b;
+
+    return result;
+
+}
+
+double MainWindow::functionMultiply(double a, double b) {
+
+    double result = a * b;
+
+    return result;
+
+}
+
+double MainWindow::functionDivision(double a, double b) {
+
+    double result = a / b;
+
+    return result;
+
+}
+
+void MainWindow::setOutputValue(double value) {
+
+    QString resultStr = QString::number(value, 'g', 12);
 
     ui->label_result->setText(resultStr);
 
 }
 
-MainWindow::~MainWindow() {
+void MainWindow::clearData() {
 
-    delete ui;
+    valueLink = &valueFirst;
+
+    valueFirst = 0;
+    valueSecond = 0;
+
+    *operationStr = "";
+
+    function = nullptr;
 
 }
 
+void MainWindow::eventClearOutput() {
+
+    clearData();
+
+    ui->label_operation->setText("");
+    ui->label_result->setText("0");
+
+}
+
+void MainWindow::eventClickNumber() {
+
+    QPushButton *button = static_cast<QPushButton*>(sender());
+
+    *valueLink = *valueLink * 10 + (button->text()).toDouble();
+
+    setOutputValue(*valueLink);
+
+}
+
+void MainWindow::eventClickSum() {
+
+    this->function = &MainWindow::functionSum;
+    this->valueLink = &valueSecond;
+
+    setOutputValue(valueSecond);
+
+}
+
+void MainWindow::eventClickSubtract() {
+
+    this->function = &MainWindow::functionSubtract;
+    this->valueLink = &valueSecond;
+
+    setOutputValue(valueSecond);
+
+}
+
+void MainWindow::eventClickMultiply() {
+
+    this->function = &MainWindow::functionMultiply;
+    this->valueLink = &valueSecond;
+
+    setOutputValue(valueSecond);
+
+}
+
+void MainWindow::eventClickDivision() {
+
+    this->function = &MainWindow::functionDivision;
+    this->valueLink = &valueSecond;
+
+    setOutputValue(valueSecond);
+
+}
+
+void MainWindow::eventClickResult() {
+
+    double result = (this->*function)(valueFirst, valueSecond);
+
+    setOutputValue(result);
+
+    clearData();
+
+}
+
+MainWindow::~MainWindow() {
+
+    delete operationStr;
+    delete ui;
+
+}

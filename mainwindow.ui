@@ -32,11 +32,11 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow {
-	background-color: rgb(240, 240, 240);
+	background: rgb(240, 240, 240);
 }
 
 QPushButton {
-	background-color: rgb(230, 230, 230);
+	background: rgb(230, 230, 230);
 	color: rgb(0, 0, 0);
 	border: none;
 	border-bottom: 1px solid rgb(155, 155, 155);
@@ -44,12 +44,12 @@ QPushButton {
 }
 
 QPushButton:hover {
-	background-color: rgb(235, 235, 235);
+	background: rgb(235, 235, 235);
 	border-bottom: 1px solid rgb(175, 175, 175);
 }
 
 QPushButton:pressed {
-	background-color: rgb(220, 220, 220);
+	background: rgb(220, 220, 220);
 	border-bottom: 1px solid rgb(220, 220, 220);
 }</string>
   </property>
