@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->valueLink = &valueFirst;
     this->operationStr = new QString("");
 
+    this->function = nullptr;
+
     connect(ui->pushButton_0, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_1, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
@@ -32,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_minus, SIGNAL(clicked()), this, SLOT(eventClickSubtract()));
     connect(ui->pushButton_multiply, SIGNAL(clicked()), this, SLOT(eventClickMultiply()));
     connect(ui->pushButton_division, SIGNAL(clicked()), this, SLOT(eventClickDivision()));
+
+    connect(ui->pushButton_percent, SIGNAL(clicked()), this, SLOT(eventClickPercent()));
+    connect(ui->pushButton_sign, SIGNAL(clicked()), this, SLOT(eventClickSignReverse()));
 
     connect(ui->pushButton_result, SIGNAL(clicked()), this, SLOT(eventClickResult()));
 
@@ -66,6 +71,29 @@ double MainWindow::functionDivision(double a, double b) {
     double result = a / b;
 
     return result;
+
+}
+
+void MainWindow::functionPercent(double *val) {
+
+    if (*val != 0.0f) {
+        *val /= 100;
+    }
+
+    if (this->function == &MainWindow::functionSum ||
+        this->function == &MainWindow::functionDivision) {
+
+        *val *= this->valueFirst;
+
+    }
+
+}
+
+void MainWindow::functionSignReverse(double *val) {
+
+    if (*val != 0.0f) {
+        *val *= -1;
+    }
 
 }
 
@@ -114,6 +142,8 @@ void MainWindow::eventClickSum() {
     this->function = &MainWindow::functionSum;
     this->valueLink = &valueSecond;
 
+    *this->valueLink = 0;
+
     setOutputValue(valueSecond);
 
 }
@@ -122,6 +152,8 @@ void MainWindow::eventClickSubtract() {
 
     this->function = &MainWindow::functionSubtract;
     this->valueLink = &valueSecond;
+
+    *this->valueLink = 0;
 
     setOutputValue(valueSecond);
 
@@ -132,6 +164,8 @@ void MainWindow::eventClickMultiply() {
     this->function = &MainWindow::functionMultiply;
     this->valueLink = &valueSecond;
 
+    *this->valueLink = 0;
+
     setOutputValue(valueSecond);
 
 }
@@ -141,17 +175,37 @@ void MainWindow::eventClickDivision() {
     this->function = &MainWindow::functionDivision;
     this->valueLink = &valueSecond;
 
+    *this->valueLink = 0;
+
     setOutputValue(valueSecond);
+
+}
+
+void MainWindow::eventClickPercent() {
+
+    functionPercent(this->valueLink);
+    setOutputValue(*this->valueLink);
+
+}
+
+void MainWindow::eventClickSignReverse() {
+
+    functionSignReverse(this->valueLink);
+    setOutputValue(*this->valueLink);
 
 }
 
 void MainWindow::eventClickResult() {
 
-    double result = (this->*function)(valueFirst, valueSecond);
+    if (this->function != nullptr) {
 
-    setOutputValue(result);
+        double result = (this->*function)(valueFirst, valueSecond);
 
-    clearData();
+        this->valueFirst = result;
+
+        setOutputValue(result);
+
+    }
 
 }
 

@@ -35,6 +35,9 @@ private:
     double functionMultiply(double, double);
     double functionDivision(double, double);
 
+    void functionPercent(double*);
+    void functionSignReverse(double*);
+
     void setOutputValue(double);
 
     void clearData();
@@ -48,6 +51,10 @@ private slots:
     void eventClickSubtract();
     void eventClickMultiply();
     void eventClickDivision();
+
+    void eventClickPercent();
+
+    void eventClickSignReverse();
 
     void eventClickResult();
 
