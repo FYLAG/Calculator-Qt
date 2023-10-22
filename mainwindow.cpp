@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->valueSecond = 0;
 
     this->valueLink = &valueFirst;
-    this->operationStr = new QString("");
+    this->operationStr = "";
 
     this->function = nullptr;
 
@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_7, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_8, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_9, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
+
+    connect(ui->pushButton_dot, SIGNAL(clicked()), this, SLOT(eventClickNumberDot()));
 
     connect(ui->pushButton_clear, SIGNAL(clicked()), this, SLOT(eventClearOutput()));
 
@@ -112,7 +114,7 @@ void MainWindow::clearData() {
     valueFirst = 0;
     valueSecond = 0;
 
-    *operationStr = "";
+    operationStr = "";
 
     function = nullptr;
 
@@ -137,10 +139,20 @@ void MainWindow::eventClickNumber() {
 
 }
 
+void MainWindow::eventClickNumberDot() {
+
+
+
+}
+
 void MainWindow::eventClickSum() {
 
     this->function = &MainWindow::functionSum;
     this->valueLink = &valueSecond;
+
+    this->operationStr = QString::number(valueFirst, 'g', 8) + " + ";
+
+    ui->label_operation->setText(this->operationStr);
 
     *this->valueLink = 0;
 
@@ -153,6 +165,10 @@ void MainWindow::eventClickSubtract() {
     this->function = &MainWindow::functionSubtract;
     this->valueLink = &valueSecond;
 
+    this->operationStr = QString::number(valueFirst, 'g', 8) + " - ";
+
+    ui->label_operation->setText(this->operationStr);
+
     *this->valueLink = 0;
 
     setOutputValue(valueSecond);
@@ -164,6 +180,10 @@ void MainWindow::eventClickMultiply() {
     this->function = &MainWindow::functionMultiply;
     this->valueLink = &valueSecond;
 
+    this->operationStr = QString::number(valueFirst, 'g', 8) + " * ";
+
+    ui->label_operation->setText(this->operationStr);
+
     *this->valueLink = 0;
 
     setOutputValue(valueSecond);
@@ -174,6 +194,10 @@ void MainWindow::eventClickDivision() {
 
     this->function = &MainWindow::functionDivision;
     this->valueLink = &valueSecond;
+
+    this->operationStr = QString::number(valueFirst, 'g', 8) + " / ";
+
+    ui->label_operation->setText(this->operationStr);
 
     *this->valueLink = 0;
 
@@ -199,7 +223,11 @@ void MainWindow::eventClickResult() {
 
     if (this->function != nullptr) {
 
-        double result = (this->*function)(valueFirst, valueSecond);
+        double result = (this->*function)(this->valueFirst, this->valueSecond);
+
+        this->operationStr += QString::number(this->valueSecond, 'g', 8) + " = ";
+
+        ui->label_operation->setText(this->operationStr);
 
         this->valueFirst = result;
 
@@ -211,7 +239,6 @@ void MainWindow::eventClickResult() {
 
 MainWindow::~MainWindow() {
 
-    delete operationStr;
     delete ui;
 
 }

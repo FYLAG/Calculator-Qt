@@ -24,7 +24,7 @@ private:
 
     double *valueLink;
 
-    QString *operationStr;
+    QString operationStr;
 
     double (MainWindow::*function)(double, double);
 
@@ -46,6 +46,8 @@ private slots:
 
     void eventClearOutput();
     void eventClickNumber();
+
+    void eventClickNumberDot();
 
     void eventClickSum();
     void eventClickSubtract();
