@@ -22,6 +22,8 @@ private:
     double valueFirst;
     double valueSecond;
 
+    double decimal;
+
     double *valueLink;
 
     QString operationStr;
@@ -39,6 +41,7 @@ private:
     void functionSignReverse(double*);
 
     void setOutputValue(double);
+    void addCharOutput(char);
 
     void clearData();
 

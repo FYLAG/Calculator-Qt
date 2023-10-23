@@ -9,13 +9,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
-    this->valueFirst = 0;
-    this->valueSecond = 0;
+    valueFirst = 0;
+    valueSecond = 0;
 
-    this->valueLink = &valueFirst;
-    this->operationStr = "";
+    decimal = 1;
 
-    this->function = nullptr;
+    valueLink = &valueFirst;
+    operationStr = "";
+
+    function = nullptr;
 
     connect(ui->pushButton_0, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
     connect(ui->pushButton_1, SIGNAL(clicked()), this, SLOT(eventClickNumber()));
@@ -82,10 +84,10 @@ void MainWindow::functionPercent(double *val) {
         *val /= 100;
     }
 
-    if (this->function == &MainWindow::functionSum ||
-        this->function == &MainWindow::functionDivision) {
+    if (function == &MainWindow::functionSum ||
+        function == &MainWindow::functionDivision) {
 
-        *val *= this->valueFirst;
+        *val *= valueFirst;
 
     }
 
@@ -107,12 +109,22 @@ void MainWindow::setOutputValue(double value) {
 
 }
 
+void MainWindow::addCharOutput(char character) {
+
+    QString outputStr = ui->label_result->text() + character;
+
+    ui->label_result->setText(outputStr);
+
+}
+
 void MainWindow::clearData() {
 
     valueLink = &valueFirst;
 
     valueFirst = 0;
     valueSecond = 0;
+
+    decimal = 1;
 
     operationStr = "";
 
@@ -133,7 +145,17 @@ void MainWindow::eventClickNumber() {
 
     QPushButton *button = static_cast<QPushButton*>(sender());
 
-    *valueLink = *valueLink * 10 + (button->text()).toDouble();
+    if (decimal < 1) {
+
+        *valueLink = *valueLink + (button->text()).toDouble() * decimal;
+
+        decimal /= 10;
+
+    } else {
+
+        *valueLink = *valueLink * 10 + (button->text()).toDouble();
+
+    }
 
     setOutputValue(*valueLink);
 
@@ -141,20 +163,22 @@ void MainWindow::eventClickNumber() {
 
 void MainWindow::eventClickNumberDot() {
 
-
+    decimal /= 10;
+    addCharOutput('.');
 
 }
 
 void MainWindow::eventClickSum() {
 
-    this->function = &MainWindow::functionSum;
-    this->valueLink = &valueSecond;
+    function = &MainWindow::functionSum;
+    valueLink = &valueSecond;
 
-    this->operationStr = QString::number(valueFirst, 'g', 8) + " + ";
+    operationStr = QString::number(valueFirst, 'g', 8) + " + ";
 
-    ui->label_operation->setText(this->operationStr);
+    ui->label_operation->setText(operationStr);
 
-    *this->valueLink = 0;
+    *valueLink = 0;
+    decimal = 1;
 
     setOutputValue(valueSecond);
 
@@ -162,14 +186,15 @@ void MainWindow::eventClickSum() {
 
 void MainWindow::eventClickSubtract() {
 
-    this->function = &MainWindow::functionSubtract;
-    this->valueLink = &valueSecond;
+    function = &MainWindow::functionSubtract;
+    valueLink = &valueSecond;
 
-    this->operationStr = QString::number(valueFirst, 'g', 8) + " - ";
+    operationStr = QString::number(valueFirst, 'g', 8) + " - ";
 
-    ui->label_operation->setText(this->operationStr);
+    ui->label_operation->setText(operationStr);
 
-    *this->valueLink = 0;
+    *valueLink = 0;
+    decimal = 1;
 
     setOutputValue(valueSecond);
 
@@ -177,14 +202,15 @@ void MainWindow::eventClickSubtract() {
 
 void MainWindow::eventClickMultiply() {
 
-    this->function = &MainWindow::functionMultiply;
-    this->valueLink = &valueSecond;
+    function = &MainWindow::functionMultiply;
+    valueLink = &valueSecond;
 
-    this->operationStr = QString::number(valueFirst, 'g', 8) + " * ";
+    operationStr = QString::number(valueFirst, 'g', 8) + " * ";
 
-    ui->label_operation->setText(this->operationStr);
+    ui->label_operation->setText(operationStr);
 
-    *this->valueLink = 0;
+    *valueLink = 0;
+    decimal = 1;
 
     setOutputValue(valueSecond);
 
@@ -192,14 +218,15 @@ void MainWindow::eventClickMultiply() {
 
 void MainWindow::eventClickDivision() {
 
-    this->function = &MainWindow::functionDivision;
-    this->valueLink = &valueSecond;
+    function = &MainWindow::functionDivision;
+    valueLink = &valueSecond;
 
-    this->operationStr = QString::number(valueFirst, 'g', 8) + " / ";
+    operationStr = QString::number(valueFirst, 'g', 8) + " / ";
 
-    ui->label_operation->setText(this->operationStr);
+    ui->label_operation->setText(operationStr);
 
-    *this->valueLink = 0;
+    *valueLink = 0;
+    decimal = 1;
 
     setOutputValue(valueSecond);
 
@@ -207,29 +234,29 @@ void MainWindow::eventClickDivision() {
 
 void MainWindow::eventClickPercent() {
 
-    functionPercent(this->valueLink);
-    setOutputValue(*this->valueLink);
+    functionPercent(valueLink);
+    setOutputValue(*valueLink);
 
 }
 
 void MainWindow::eventClickSignReverse() {
 
-    functionSignReverse(this->valueLink);
-    setOutputValue(*this->valueLink);
+    functionSignReverse(valueLink);
+    setOutputValue(*valueLink);
 
 }
 
 void MainWindow::eventClickResult() {
 
-    if (this->function != nullptr) {
+    if (function != nullptr) {
 
-        double result = (this->*function)(this->valueFirst, this->valueSecond);
+        double result = (this->*function)(valueFirst, valueSecond);
 
-        this->operationStr += QString::number(this->valueSecond, 'g', 8) + " = ";
+        operationStr += QString::number(valueSecond, 'g', 8) + " = ";
 
-        ui->label_operation->setText(this->operationStr);
+        ui->label_operation->setText(operationStr);
 
-        this->valueFirst = result;
+        valueFirst = result;
 
         setOutputValue(result);
 
